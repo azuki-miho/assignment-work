@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import wiener
+from scipy import signal
 def lpdn(img,r=40):
 	h,w=img.shape
 	img2=np.fft.fft2(img)
@@ -24,7 +25,7 @@ def wndn(img):
 	img2=wiener(img)
 	return img2
 
-def mv(img,R=1):
+def mvdn(img,R=1):
 	h,w=img.shape
 	rt=np.zeros((h,w))
 	for i in range(h):
@@ -52,4 +53,14 @@ def mv(img,R=1):
 				arr.sort()
 				val=arr[2*(r**2)+2*r]
 			rt[i][j]=val
+	return rt
+
+def wldn1(img,k=1):
+	h,w=img.shape
+	rt=np.zeros((h,w))
+	for i in range(h):
+		temp=img[i]
+		widths=np.arange(1,31)
+		cwtmatr=signal.cwt(temp,signal.ricker,widths)
+		rt[i]=cwtmatr[k-1]
 	return rt
