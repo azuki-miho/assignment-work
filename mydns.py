@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.signal import wiener
 from scipy import signal
-def lpdn(img,r=40):
+import pywt
+def lpdn(img,r=17):
 	h,w=img.shape
 	img2=np.fft.fft2(img)
 	fshift=np.fft.fftshift(img2)
@@ -25,7 +26,7 @@ def wndn(img):
 	img2=wiener(img)
 	return img2
 
-def mvdn(img,R=1):
+def mvdn(img,R=1,rg=4):
 	h,w=img.shape
 	rt=np.zeros((h,w))
 	for i in range(h):
@@ -37,7 +38,7 @@ def mvdn(img,R=1):
 						for n in range(2*R+1):
 							arr.append(img[i+m-R][j+n-R])
 					arr.sort()
-					val=arr[2*(R**2)+2*R]
+					val=np.mean(arr[2*(R**2)+2*R-rg:2*(R**2)+2*R+rg])
 			else:
 				ab=[]
 				ab.append(abs(i))
@@ -55,7 +56,7 @@ def mvdn(img,R=1):
 			rt[i][j]=val
 	return rt
 
-def wldn1(img,k=1):
+def wldn1(img,k=2):
 	h,w=img.shape
 	rt=np.zeros((h,w))
 	for i in range(h):
@@ -64,3 +65,28 @@ def wldn1(img,k=1):
 		cwtmatr=signal.cwt(temp,signal.ricker,widths)
 		rt[i]=cwtmatr[k-1]
 	return rt
+
+def wldn2(img,rat=0.0,wav="db31"):
+	coeffs2 = pywt.dwt2(img,wav)
+	ll,(lh,hl,hh) = coeffs2
+	h,w = hh.shape
+	for i in range(h):
+		for j in range(w):
+			lh[i][j] = rat*lh[i][j]
+			hl[i][j] = rat*hl[i][j]
+			hh[i][j] = rat*hh[i][j]
+	coeffs2t = ll,(lh,hl,hh)
+	rt = pywt.idwt2(coeffs2t,wav)
+	return rt
+
+def snr(image0,image1):
+	h,w=image0.shape
+	imagen=image1-image0
+	sigp=0
+	nsp=0
+	for i in range(h):
+		for j in range(w):
+			sigp=sigp+(image0[i][j])**2
+			nsp=nsp+(imagen[i][j])**2
+	ratio=sigp/nsp
+	return ratio
