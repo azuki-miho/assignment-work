@@ -2,8 +2,9 @@ import galsim
 import math
 import numpy
 import matplotlib.pyplot as plt
+import random
 random_seed=553728
-sky_level=1.e4
+sky_level=1.e1
 pixel_scale=0.28
 nx=64
 ny=64
@@ -25,6 +26,7 @@ k=0
 galarray = []
 galarray0 = []
 for i in range(100):
+	k += 1
 	rng=galsim.UniformDeviate(random_seed+k+1)
 	flux=rng()*(gal_flux_max-gal_flux_min)+gal_flux_min
 	this_gal=gal1.withFlux(flux)
@@ -36,6 +38,8 @@ for i in range(100):
 	this_gal=this_gal.shear(gal_shape)
 	final=galsim.Convolve([this_gal,psf])
 	
+	print(rng())
+		
 	image0=galsim.ImageF(2*nx+2,ny,scale=pixel_scale)
 	fft_image0=image0[galsim.BoundsI(1,nx,1,ny)]
 	phot_image0=image0[galsim.BoundsI(nx+3,2*nx+2,1,ny)]
