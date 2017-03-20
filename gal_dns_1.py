@@ -1,6 +1,7 @@
 import galsim
 import math
 import numpy
+import matplotlib.pyplot as plt
 import random
 random_seed=553728
 sky_level=1.e1

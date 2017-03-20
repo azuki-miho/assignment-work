@@ -2,65 +2,70 @@ from mydns import *
 from gal_dnstest import *
 import pywt
 from ellipse import *
+import numpy as np
 
-orge = []
+e1arr = []
+e2arr = []
 for i in range(200):
 	e1,e2 = elli(galarray0[i])
-	e = (e1,e2)
-	orge.append(e)
+	e1arr.append(e1)
+	e2arr.append(e2)
+e1arr = np.array(e1arr)
+e2arr = np.array(e2arr)
 
-sige = []	
+sige1 = []
+sige2 = []
 for i in range(200):
 	e1,e2 = elli(galarray[i])
-	e = (e1,e2)
-	sige.append(e)
-
+	sige1.append(e1)
+	sige2.append(e2)
+sige1 = np.array(sige1)
+sige2 = np.array(sige2)
+"""
 varsig = 0
 for i in range(200):
 	s1 = (sige[i][0]-orge[i][0])/orge[i][0]
 	s2 = (sige[i][1]-orge[i][1])/orge[i][1]
 	var = s1**2 + s2**2
 	varsig += var
+"""
 
+
+
+"""
 print("This is the variance of the signal")
 print(varsig)
 #testsnr for lpdn
 min_var = 0
+elp = []
 for j in range(40):
 	varlp = 0
 	for i in range(200):
 		lpimage = lpdn(galarray[i],r=j+3)
-		lpimage = wndn(lpimage)
-		lpimage = wndn(lpimage)
-		lpimage = wndn(lpimage)
-		lpimage = wndn(lpimage)
 		(e1,e2) = elli(lpimage)
-		s1 = (e1-orge[i][0])/orge[i][0]
-		s2 = (e2-orge[i][1])/orge[i][1]
-		s = s1**2 + s2**2
-		varlp += s
-	if (min_var == 0):
-		min_var = varlp
-		print("This is the variance for the lpdn")
-		print(varlp);print(j+1)
-	else:
-		if (varlp <= min_var):
-			min_var = varlp
-			print("This is the variance for the lpdn")
-			print(varlp);print(j+1)
-			
+"""			
 #testsnr for wndn
-varwn = 0
+wne1 = []
+wne2 = []
 for i in range(200):
 	wnimage = wndn(galarray[i])
 	(e1,e2) = elli(wnimage)
-	s1 = (e1-orge[i][0])/orge[i][0]
-	s2 = (e2-orge[i][1])/orge[i][1]
-	s = s1**2 + s2**2
-	varwn += s
-print("This is the variance for the wndn")
-print(varwn)
+	if (e1**2 < 1):
+		{
+		wne1.append(e1)
+		}
+	else:
+		{
+		wne1.append(0)
+		}
+wne1 = np.array(wne1)
+wne2 = np.array(wne2)
 
+plt.figure()
+plt.scatter(e1arr,wne1)
+plt.show()
+	
+"""
 #testsnr for mvdn
 min_var = 0
 for k in range(4):
@@ -125,3 +130,4 @@ for j in range(len(wls)):
 				min_var =varwl2
 				print("This is the variance for the");print(wls[j])
 				print(varwl2);print(k/10.)
+"""

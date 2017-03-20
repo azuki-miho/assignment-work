@@ -1,6 +1,7 @@
 import galsim
 import math
 import numpy
+import matplotlib.pyplot as plt
 import random
 random_seed=553728
 sky_level=1.e1
@@ -31,10 +32,7 @@ for i in range(100):
 	this_gal=gal1.withFlux(flux)
 	hlr=rng()*(gal_hlr_max-gal_hlr_min)+gal_hlr_min
 	this_gal=this_gal.dilate(hlr)
-	beta_ellip=rng()*2*math.pi*galsim.radians
-	ellip=rng()*(gal_e_max-gal_e_min)+gal_e_min
-	gal_shape=galsim.Shear(e=ellip,beta=beta_ellip)
-	this_gal=this_gal.shear(gal_shape)
+	this_gal=this_gal.shear(g1=0.5,g2=0.5)
 	final=galsim.Convolve([this_gal,psf])
 	
 	print(rng())
@@ -55,10 +53,12 @@ for i in range(100):
 	rng=galsim.UniformDeviate(random_seed+k+1)
 	rng();rng();rng();rng();
 	final.drawImage(phot_image,method='phot',max_extra_noise=sky_level_pixel/100,\
+	
 	                rng=rng)
 	pd=galsim.PoissonDeviate(rng,mean=sky_level_pixel)
 	phot_image.addNoise(galsim.DeviateNoise(pd))
 	phot_image -= sky_level_pixel
+		
 	
 	image0a = image0.array
 	imagea = image.array
@@ -66,4 +66,3 @@ for i in range(100):
 	galarray0.append(image0a[0:64,66:])
 	galarray.append(imagea[0:64,0:64])
 	galarray.append(imagea[0:64,66:])
-	

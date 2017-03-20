@@ -32,11 +32,16 @@ ellip=rng()*(gal_e_max-gal_e_min)+gal_e_min
 gal_shape=galsim.Shear(e=ellip,beta=beta_ellip)
 this_gal=this_gal.shear(gal_shape)
 final=galsim.Convolve([this_gal,psf])
+
 image=galsim.ImageF(2*nx+2,ny,scale=pixel_scale)
+
 fft_image=image[galsim.BoundsI(1,nx,1,ny)]
+
 phot_image=image[galsim.BoundsI(nx+3,2*nx+2,1,ny)]
 final.drawImage(fft_image,method='fft')
+
 sky_level_pixel=sky_level*pixel_scale**2
+
 fft_image.addNoise(galsim.PoissonNoise(rng,sky_level=sky_level_pixel))
 rng=galsim.UniformDeviate(random_seed+k+1)
 rng();rng();rng();rng();
@@ -45,5 +50,17 @@ final.drawImage(phot_image,method='phot',max_extra_noise=sky_level_pixel/100,\
 pd=galsim.PoissonDeviate(rng,mean=sky_level_pixel)
 phot_image.addNoise(galsim.DeviateNoise(pd))
 phot_image -= sky_level_pixel
-plt.imshow(image.array)
-plt.show()
+
+image0=galsim.ImageF(2*nx+2,ny,scale=pixel_scale)
+
+fft_image0=image0[galsim.BoundsI(1,nx,1,ny)]
+
+phot_image0=image0[galsim.BoundsI(nx+3,2*nx+2,1,ny)]
+final.drawImage(fft_image0,method='fft')
+
+#fft_image.addNoise(galsim.PoissonNoise(rng,sky_level=sky_level_pixel))
+#rng=galsim.UniformDeviate(random_seed+k+1)
+#rng();rng();rng();rng();
+final.drawImage(phot_image0,method='phot',max_extra_noise=sky_level_pixel/100)
+
+imaged=image-image0
